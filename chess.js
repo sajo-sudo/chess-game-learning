@@ -37,13 +37,7 @@ function Chess() {
 
 Chess.prototype.canMoveRook = function(moveLocation, color, rookSide) {
   const currentLocation = this.coins[color].Rook[rookSide];
-  if (
-    currentLocation[0] === moveLocation[0] ||
-    currentLocation[1] === moveLocation[1]
-  ) {
-    return true;
-  }
-  return false;
+  return currentLocation[0] === moveLocation[0] || currentLocation[1] === moveLocation[1];
 };
 
 Chess.prototype.moveRook = function(moveLocation, color, rookSide) {
