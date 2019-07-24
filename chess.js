@@ -1,6 +1,6 @@
 // var PImage = require("pureimage");
 
-(function(exports) {
+(function (exports) {
   function slope([x, y], [x1, y1]) {
     return (y1 - y) / (x1 - x);
   }
@@ -20,10 +20,21 @@
     return pos[0] >= 0 && pos[0] <= 7 && (pos[1] >= 0 && pos[1] <= 7);
   }
 
-  function knightmove(currentLocation) {
+  function zerothArrayofIndex(arr) {
+    var x = []
+    for (i = 1; i < arr.length; i++) {
+      x.push(arr[i])
+
+    }
+    return x
+  }
+
+
+  function knightmove(currentLocation, color, coins) {
     var x = currentLocation[0];
     var y = currentLocation[1];
     var arr = [
+      currentLocation,
       [x + 2, y - 1],
       [x + 2, y + 1],
       [x + 1, y + 2],
@@ -33,16 +44,19 @@
       [x - 1, y - 2],
       [x - 1, y + 2]
     ];
-    return arr.filter(validPosition);
+    var knightfilter = arr.filter(validPosition);
+    return filterposionONcolor(knightfilter, color, coins);
+
   }
 
+
   function isSamePos(pos1) {
-    return function(pos2) {
+    return function (pos2) {
       return pos1[0] === pos2[0] && pos1[1] === pos2[1];
     };
   }
 
-  function kingMove(currentLocation) {
+  function kingMove(currentLocation, color, coins) {
     var x1 = currentLocation[0];
     var y1 = currentLocation[1];
     var arrOfarray = [
@@ -55,40 +69,120 @@
       [x1, y1 - 1],
       [x1 - 1, y1 - 1]
     ];
-    return arrOfarray.filter(validPosition);
+    var kingarray = arrOfarray.filter(validPosition);
+    return filterposionONcolor(kingarray, color, coins);
   }
-
-  function yInterCept(x, y, slope) {
-    return y - slope * x;
-  }
-
-  function findStartAndEndOfBishopLine([row, col], slope) {
-    let y_itercept = yInterCept(row, col, slope);
-    if (y_itercept <= 7) {
-      return [[0, y_itercept], [y_itercept, 0]];
-    }
-    const min_x = (7 - y_itercept) / slope;
-    return [[min_x, 7], [7, min_x]];
-  }
-
-  function findAllLinePoints(startX, endX, m, c) {
-    const result = [];
-    for (let x = startX; x <= endX; x++) {
-      result.push([x, m * x + c]);
-    }
-    return result;
-  }
-
-  function possibleBishopMoves([row, col]) {
-    const [minusStart, minusEnd] = findStartAndEndOfBishopLine([row, col], -1);
-    const [plusStart, plusEnd] = findStartAndEndOfBishopLine([row, col], 1);
-    console.log([plusStart, plusEnd]);
-    return findAllLinePoints(
-      minusStart[0],
-      minusEnd[0],
-      -1,
-      yInterCept(row, col, -1)
+  //console.log(kingMove([4,4]),"fgh"
+  function possibleBishopMoves([row, col], color, coins) {
+    const positionDownlineRight = filtertillcoinnotfound(
+      secondBishopLine([row, col]),
+      color,
+      coins
     );
+    const positionUplineleft = filtertillcoinnotfound(
+      UpBishopLine([row, col]),
+      color,
+      coins
+    );
+    const positionUpRightline = filtertillcoinnotfound(
+      firstBishopLine([row, col]),
+      color,
+      coins
+    );
+    const positionUpleftline = filtertillcoinnotfound(
+      DownsBishopLine([row, col]),
+      color,
+      coins
+    );
+    return positionDownlineRight
+      .concat(positionUplineleft)
+      .concat(positionUpRightline)
+      .concat(positionUpleftline);
+  }
+
+  function secondBishopLine([row, col]) {
+    var x = [[row, col]];
+    for (var i = row + 1; i < 8; i++) {
+      x.push([i, x[x.length - 1][1] + 1]);
+    }
+    var filter = x.filter(validPosition);
+    return zerothArrayofIndex(filter);
+  }
+
+  function UpBishopLine([row, col]) {
+    var y = [[row, col]];
+    for (var i = 7; i > 0; i--) {
+      y.push([y[y.length - 1][0] - 1, y[y.length - 1][1] - 1]);
+    }
+    var filter = y.filter(validPosition);
+    return zerothArrayofIndex(filter);
+  }
+
+  function firstBishopLine([row, col]) {
+    var a = [[row, col]];
+    for (var i = 7; i > 0; i--) {
+      a.push([a[a.length - 1][0] - 1, a[a.length - 1][1] + 1]);
+    }
+    var filter = a.filter(validPosition);
+    return zerothArrayofIndex(filter);
+  }
+
+  function DownsBishopLine([row, col]) {
+    var w = [[row, col]];
+    for (var i = 7; i > 0; i--) {
+      w.push([w[w.length - 1][0] + 1, w[w.length - 1][1] - 1]);
+    }
+    var filter = w.filter(validPosition);
+    return zerothArrayofIndex(filter);
+  }
+
+  function RookPosibleLine([row, col], color, coins) {
+    const RookList1 = filtertillcoinnotfound(posiblemoveforRookLine([row, col]), color, coins);
+    const RookList2 = filtertillcoinnotfound(posiblemoveforRookLinedown([row, col]), color, coins)
+    const RookList3 = filtertillcoinnotfound(posiblemoveforRookLinesUpoN([row, col]), color, coins)
+    const RookList4 = filtertillcoinnotfound(posiblemoveforRookLinesDownoN([row, col]), color, coins)
+    return RookList1.concat(RookList2).concat(RookList3).concat(RookList4)
+  }
+  function posiblemoveforRookLine([row, col]) {
+    var x = [[row, col + 1]]
+    for (var i = col + 1; i < 7; i++) {
+      x.push([row, i + 1])
+
+    }
+    return x.filter(validPosition)
+  }
+  // ---->
+  function posiblemoveforRookLinedown([row, col]) {
+    var arr = [[row + 1, col]]
+    for (var i = row + 1; i < 8; i++) {
+      arr.push([i + 1, col])
+    }
+    return arr.filter(validPosition)
+  }
+  //------down ***
+
+  function posiblemoveforRookLinesUpoN([row, col]) {
+    var x = [[row, col - 1]]
+    for (var i = col - 1; i > 0; i--) {
+      x.push([row, i - 1])
+    }
+    return x.filter(validPosition)
+  }
+  // <------
+
+  function posiblemoveforRookLinesDownoN([row, col]) {
+    var arr = [[row - 1, col]]
+    for (var i = row - 1; i > 0; i--) {
+      arr.push([i - 1, col])
+    }
+    return arr.filter(validPosition)
+  }
+  // ----^^^^^-------
+  function QueenPosibleLine([row, col], color, coins) {
+    const Rook = RookPosibleLine([row, col], color, coins);
+    const Bishop = possibleBishopMoves([row, col], color, coins)
+    const RookBishopconcat = Rook.concat(Bishop)
+    return RookBishopconcat
   }
 
   function sippaiMove(currentLocation, color) {
@@ -109,8 +203,13 @@
     throw Error("Invalid Move");
   }
 
-  function getCoinOnpos(coin, pos) {
-    var white = coin.white;
+  function sippaifillter(currentLocation,color,coins){
+    var filtermove = sippaiMove(currentLocation,color)
+    return filtertillcoinnotfound(filtermove,color,coins)
+  }
+
+  function getCoinOnpos(coins, pos) {
+    var white = coins.white;
     var whiteking = white.King;
     if (isSamePos(pos)(whiteking)) {
       return ["white", "king"];
@@ -137,7 +236,7 @@
     if (isSamePos(pos)(whiteKnightRight)) {
       return ["white", "Knight", "Right"];
     }
-    var whiteBishop = coin.white.Bishop;
+    var whiteBishop = coins.white.Bishop;
     var whiteBishopleft = whiteBishop.Left;
     if (isSamePos(pos)(whiteBishopleft)) {
       return ["white", "Bishop", "Left"];
@@ -152,7 +251,7 @@
         return ["white", "sippai", i];
       }
     }
-    var black = coin.black;
+    var black = coins.black;
     var blackKing = black.King;
     if (isSamePos(pos)(blackKing)) {
       return ["black", "king"];
@@ -170,7 +269,7 @@
     if (isSamePos(pos)(BlackRookRight)) {
       return ["black", "Rook", "Right"];
     }
-    var blackKnight = coin.black.Knight;
+    var blackKnight = coins.black.Knight;
     var BlackKnightleft = blackKnight.Left;
     if (isSamePos(pos)(BlackKnightleft)) {
       return ["black", "Knight", "Left"];
@@ -179,7 +278,7 @@
     if (isSamePos(pos)(blackKnightRight)) {
       return ["black", "Knight", "Right"];
     }
-    var blackBishop = coin.black.Bishop;
+    var blackBishop = coins.black.Bishop;
     var blackBishopLeft = blackBishop.Left;
     if (isSamePos(pos)(blackBishopLeft)) {
       return ["black", "Bishop", "Left"];
@@ -196,7 +295,6 @@
     }
     return null;
   }
-
   function Chess() {
     this.selectedCoin = null;
     this.coins = {
@@ -219,7 +317,7 @@
       },
       black: {
         Rook: {
-          Right: [0, 0],
+          Right: [4, 4],
           Left: [0, 7]
         },
         Bishop: {
@@ -230,25 +328,25 @@
           Right: [0, 1],
           Left: [0, 6]
         },
-        Queen: [0, 3],
+        Queen: [5, 5],
         King: [0, 4],
         sippai: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]]
       }
     };
   }
 
-  Chess.prototype.getPosOfCoin = function(coinPath) {
-    return coinPath.reduce(function(prevObj, currentKey) {
+  Chess.prototype.getPosOfCoin = function (coinPath) {
+    return coinPath.reduce(function (prevObj, currentKey) {
       return prevObj[currentKey];
     }, this.coins);
   };
 
-  Chess.prototype.canMoveRook = function(moveLocation, color, rookSide) {
+  Chess.prototype.canMoveRook = function (moveLocation, color, rookSide) {
     const currentLocation = this.coins[color].Rook[rookSide];
     return RookMove(currentLocation, moveLocation);
   };
 
-  Chess.prototype.moveRook = function(moveLocation, color, rookSide) {
+  Chess.prototype.moveRook = function (moveLocation, color, rookSide) {
     if (this.canMoveRook(moveLocation, color, rookSide)) {
       this.coins[color].Rook[rookSide] = moveLocation;
       return moveLocation;
@@ -256,36 +354,36 @@
     throw Error("Invalid Move");
   };
 
-  Chess.prototype.selectCoin = function(coinPath) {
+  Chess.prototype.selectCoin = function (coinPath) {
     // it is unsafe. because, we didn't validate coinpath
     this.selectedCoin = coinPath;
   };
 
-  Chess.prototype.canMoveBishop = function(moveLocation, color, bishopSide) {
+  Chess.prototype.canMoveBishop = function (moveLocation, color, bishopSide) {
     const currentLocation = this.coins[color].Bishop[bishopSide];
     return BishopMove(currentLocation, moveLocation);
   };
 
-  Chess.prototype.moveBishop = function(moveLocation, color, bishopSide) {
+  Chess.prototype.moveBishop = function (moveLocation, color, bishopSide) {
     if (this.canMoveBishop(moveLocation, color, bishopSide)) {
       this.coins[color].Bishop[bishopSide] = moveLocation;
       return moveLocation;
     }
     throw Error("Invalid Move");
   };
-  Chess.prototype.canMoveKnight = function(moveLocation, color, KnightSide) {
+  Chess.prototype.canMoveKnight = function (moveLocation, color, KnightSide) {
     const currentLocation = this.coins[color].Knight[KnightSide];
     const knightMoves = knightmove(currentLocation);
     return knightMoves.some(isSamePos(moveLocation));
   };
-  Chess.prototype.moveKnight = function(moveLocation, color, KnightSide) {
+  Chess.prototype.moveKnight = function (moveLocation, color, KnightSide) {
     if (this.canMoveKnight(moveLocation, color, KnightSide)) {
       this.coins[color].Knight[KnightSide] = moveLocation;
       return moveLocation;
     }
     throw Error("Invalid Move");
   };
-  Chess.prototype.canMoveQueen = function(moveLocation, color) {
+  Chess.prototype.canMoveQueen = function (moveLocation, color) {
     const currentLocation = this.coins[color].Queen;
     return (
       RookMove(currentLocation, moveLocation) ||
@@ -293,7 +391,7 @@
     );
   };
 
-  Chess.prototype.moveQueen = function(moveLocation, color) {
+  Chess.prototype.moveQueen = function (moveLocation, color) {
     if (this.canMoveQueen(moveLocation, color)) {
       this.coins[color].Queen = moveLocation;
       return moveLocation;
@@ -301,13 +399,13 @@
     throw Error("Invalid Move");
   };
 
-  Chess.prototype.canMoveKing = function(moveLocation, color) {
+  Chess.prototype.canMoveKing = function (moveLocation, color) {
     const currentLocation = this.coins[color].King;
     const kingMoves = kingMove(currentLocation);
     return kingMoves.some(isSamePos(moveLocation));
   };
 
-  Chess.prototype.moveKing = function(moveLocation, color) {
+  Chess.prototype.moveKing = function (moveLocation, color) {
     if (this.canMoveKing(moveLocation, color)) {
       this.coins[color].King = moveLocation;
       return moveLocation;
@@ -315,44 +413,47 @@
     throw Error("Invalid Move");
   };
 
-  Chess.prototype.canMovesippai = function(moveLocation, color, number) {
+  Chess.prototype.canMovesippai = function (moveLocation, color, number) {
     const currentLocation = this.coins[color].sippai[number];
     const sippaiMoves = sippaiMove(currentLocation, color);
     return sippaiMoves.some(isSamePos(moveLocation));
   };
 
-  Chess.prototype.movesippai = function(moveLocation, color, number) {
+  Chess.prototype.movesippai = function (moveLocation, color, number) {
     if (this.canMovesippai(moveLocation, color, number)) {
       this.coins[color].sippai = moveLocation;
       return moveLocation;
     }
     throw Error("Invalid Move");
   };
-  Chess.prototype.getPosibleMoves = function(currentLocation) {
+  Chess.prototype.getPosibleMoves = function (currentLocation) {
     const currentCoin = getCoinOnpos(this.coins, currentLocation); // ["White", "sippai", 0]
+    // console.log(currentCoin,"ddd")
     var current = currentCoin[1];
     var currentColor = currentCoin[0];
     switch (current) {
       case "king":
-        return kingMove(currentLocation);
+        return kingMove(currentLocation, currentColor, this.coins);
       case "Queen":
-        break;
-      case " Rook":
-        break;
+        return QueenPosibleLine(currentLocation, currentColor, this.coins);
+      case "Rook":
+        return RookPosibleLine(currentLocation, currentColor, this.coins);
       case "Bishop":
-        return possibleBishopMoves(currentLocation);
+        return possibleBishopMoves(currentLocation, currentColor, this.coins);
       case "Knight":
-        return knightmove(currentLocation);
+        return knightmove(currentLocation, currentColor, this.coins);
       case "sippai":
-        return sippaiMove(currentLocation, currentColor);
+        return sippaifillter(currentLocation, currentColor,this.coins);
+      default:
+        return null
     }
   };
 
-  Chess.prototype.getCoinOnpos = function(pos) {
+  Chess.prototype.getCoinOnpos = function (pos) {
     return getCoinOnpos(this.coins, pos);
   };
 
-  Chess.prototype.move = function(currentLocation, moveLocation) {
+  Chess.prototype.move = function (currentLocation, moveLocation) {
     var Current = getCoinOnpos(this.coins, currentLocation);
     if (Current[1] == "king") {
       var Kingmove = this.moveKing(moveLocation, Current[0]);
@@ -376,8 +477,56 @@
     throw Error("Invalid Move");
   };
 
-  exports.Chess = Chess;
+  function filtertillcoinnotfound(posiblemoves, color, coins) {
+    var filteredPosiblemove = [];
+    for (let i = 0; i < posiblemoves.length; i++) {
+      const currentmove = posiblemoves[i];
+      var currentcoin = getCoinOnpos(coins, currentmove)
+      if (currentcoin == null) {
+        filteredPosiblemove.push(currentmove)
+      } else {
+        if (color == currentcoin[0]) {
+          break;
+        } else {
+          filteredPosiblemove.push(currentmove);
+          break;
+        }
 
+      }
+    }
+    return filteredPosiblemove;
+  }
+  //console.log(filtertillcoinnotfound(chees.getPosibleMoves ([0,0])))
+
+
+  function filterposionONcolor(posiblemoves, color, coins) {
+    var filteredPosiblemoveble = [];
+    var filterEqualcolor = [];
+    for (let i = 0; i < posiblemoves.length; i++) {
+      const currentmove = posiblemoves[i];
+      var currentcoin = getCoinOnpos(coins, currentmove)
+      if (currentcoin == null) {
+        filteredPosiblemoveble.push(currentmove)
+
+      } else {
+        if (color == currentcoin[0]) {
+          filterEqualcolor.push(currentmove)
+        } else {
+          filteredPosiblemoveble.push(currentmove);
+        }
+
+      }
+    }
+    //console.log(filteredPosiblemoveble, "assss")
+    return filteredPosiblemoveble;
+  }
+  
+  
+
+  exports.Chess = Chess;
   // Chess.prototype.canMoveKnight = function (moveLocation, color, KnightSide) {
   // Chess.prototype.moveKnight = function (moveLocation, color, KnightSide)
 })((chess = {}));
+
+
+
