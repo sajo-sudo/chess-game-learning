@@ -305,12 +305,17 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
   function squareClickListener(event){
     let coin = chessBoard.getCoinOnpos([this.row,this.col])
     if(coin){
+      if(chessBoard.selectedCoin){
+        const position = chessBoard.getPosOfCoin(chessBoard.selectedCoin);
+        getChessSquare(position).classList.remove("selected_coin_square")
+      }
       let coins = chessBoard.getPosOfCoin(coin)
       getChessSquare(coins).classList.add("selected_coin_square")
+      chessBoard.selectCoin(coin)
     }else{
       alert("you wil not toch the coin")
     }
-    
+
   }
 
   function createSquare(isBlack, row, col) {
