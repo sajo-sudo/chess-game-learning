@@ -305,8 +305,8 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
   function squareClickListener(event){
     let coin = chessBoard.getCoinOnpos([this.row,this.col])
     if(coin){
-      alert("you wil touch the coin")
-
+      let coins = chessBoard.getPosOfCoin(coin)
+      getChessSquare(coins).classList.add("selected_coin_square")
     }else{
       alert("you wil not toch the coin")
     }
