@@ -1,6 +1,7 @@
-const Chess = require("./chess");
-
+ const Chess= require("./chess");
+///console.log(chessExported,"ddd")
 const chess = new Chess();
+//console.log(chess,"DFD")
 
 // chess.printBoard();
 
@@ -44,12 +45,17 @@ const chess = new Chess();
 
 //console.log(chess.canMoveBishop([5,5], "white","Right"))
 //console.log(chess.moveBishop([5,5], "white","Right"))
-console.log(chess.canMoveQueen([3,6],"black"))
-console.log(chess.moveQueen([3,6],"black"))
-console.log(chess.canMoveKnight([5,7],"white","Right"))
-console.log(chess.canMoveKnight([5,5],"white","Right"))
-console.log(chess.moveKnight([5,5],"white","Right"))
-console.log(chess.canMoveKing([7,5],"white"))
-console.log(chess.moveKing([7,6],"white"))
-console.log(chess.canMovesippai([2,0],"black",0))
- console.log(chess.movesippai([3,0],"white",0))
+// console.log(chess.canMoveQueen([3,6],"black"))
+// console.log(chess.moveQueen([3,6],"black"))
+// console.log(chess.canMoveKnight([5,7],"white","Right"))
+// console.log(chess.canMoveKnight([5,5],"white","Right"))
+// console.log(chess.moveKnight([5,5],"white","Right"))
+// console.log(chess.canMoveKing([7,5],"white"))
+// console.log(chess.moveKing([7,6],"white"))
+//console.log(chess.canMovesippai([4,0],"white",0))
+ //console.log(chess.movesippai([4,0],"white",0))
+ //console.log(chessExported.getCoinOnpos(chess.coins, [1,6]))
+//  console.log(chess.move([0,0],[0,1]))
+//  console.log("asha")
+console.log(getPosibleMoves([0,1]))
+ 
