@@ -307,18 +307,19 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
     if(coin){
       if(chessBoard.selectedCoin){
         const position = chessBoard.getPosOfCoin(chessBoard.selectedCoin);
-        const possibleMove= chessBoard.getPosibleMoves([this.row, this.col]);
+        getChessSquare(position).classList.remove("selected_coin_square")
+        const possibleMove= chessBoard.getPosibleMoves(position);
       possibleMove.map(getChessSquare).forEach(function(arr){
       arr.classList.remove("selected_coin_square")
       })
     }
       let coins = chessBoard.getPosOfCoin(coin)
       getChessSquare(coins).classList.add("selected_coin_square")
-      const possibleMovepos= chessBoard.getPosibleMoves([this.row, this.col]);
+      const possibleMovepos= chessBoard.getPosibleMoves(coins);
       possibleMovepos.map(getChessSquare).forEach(function(values){
       values.classList.add("selected_coin_square")
       })
-
+chessBoard.selectCoin(coin)
     }else{
       alert("you wil not toch the coin")
     }
