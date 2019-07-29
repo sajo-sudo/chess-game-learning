@@ -323,6 +323,9 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
     } else {
       if (chessBoard.selectedCoin) {
         const pos = chessBoard.getPosOfCoin(chessBoard.selectedCoin)
+        const square =getChessSquare(pos)
+        const squarechildren = square.children
+        console.log(squarechildren,"ghjk")
         const possibleMove = chessBoard.getPosibleMoves(pos);
         const currentSquare = [this.row,this.col]
         const validPosition = possibleMove.find(function (move) {
@@ -331,6 +334,7 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
           }
         })
         if (validPosition) {
+      
           alert('you have selected valid position')
         } else {
           alert('Invalid position')
