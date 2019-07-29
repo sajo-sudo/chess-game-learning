@@ -302,31 +302,45 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
   const doubleCoins = ["Rook", "Bishop", "Knight"]; // {Left, Right}
   const singleCoins = ["King", "Queen"]; // []
   const chessBoard = new chess.Chess();
-  function squareClickListener(event){
-    let coin = chessBoard.getCoinOnpos([this.row,this.col])
-    if(coin){
-      if(chessBoard.selectedCoin){
+  function squareClickListener(event) {
+    let coin = chessBoard.getCoinOnpos([this.row, this.col])
+    if (coin) {
+      if (chessBoard.selectedCoin) {
         const position = chessBoard.getPosOfCoin(chessBoard.selectedCoin);
         getChessSquare(position).classList.remove("selected_coin_square")
-        const possibleMove= chessBoard.getPosibleMoves(position);
-      possibleMove.map(getChessSquare).forEach(function(arr){
-      arr.classList.remove("selected_coin_square")
-      })
-    }
+        const possibleMove = chessBoard.getPosibleMoves(position);
+        possibleMove.map(getChessSquare).forEach(function (arr) {
+          arr.classList.remove("selected_coin_square")
+        })
+      }
       let coins = chessBoard.getPosOfCoin(coin)
       getChessSquare(coins).classList.add("selected_coin_square")
-      const possibleMovepos= chessBoard.getPosibleMoves(coins);
-      possibleMovepos.map(getChessSquare).forEach(function(values){
-      values.classList.add("selected_coin_square")
+      const possibleMovepos = chessBoard.getPosibleMoves(coins);
+      possibleMovepos.map(getChessSquare).forEach(function (values) {
+        values.classList.add("selected_coin_square")
       })
-chessBoard.selectCoin(coin)
-    }else{
-      alert("you wil not toch the coin")
+      chessBoard.selectCoin(coin)
+    } else {
+      if (chessBoard.selectedCoin) {
+        const pos = chessBoard.getPosOfCoin(chessBoard.selectedCoin)
+        const possibleMove = chessBoard.getPosibleMoves(pos);
+        const currentSquare = [this.row,this.col]
+        const validPosition = possibleMove.find(function (move) {
+          if (move[0] == currentSquare[0] && move[1] == currentSquare[1]) {
+            return move
+          }
+        })
+        if (validPosition) {
+          alert('you have selected valid position')
+        } else {
+          alert('Invalid position')
+        }
+      }
+      else {
+        alert("you wil not toch the coin")
+      }
     }
   }
-  
-
-
   function createSquare(isBlack, row, col) {
     const square = document.createElement("span");//sppan enpathu square box,
     if (isBlack) { //is Black first varum pothu  fals ah iruku secound time true agidum
@@ -374,7 +388,6 @@ chessBoard.selectCoin(coin)
       square.classList.add("white_coin");
     }
   }
-
   function renderChessPos(coins, isBlack) {
     for (const coin in coins) {
       if (singleCoins.indexOf(coin) !== -1) {
@@ -405,39 +418,3 @@ chessBoard.selectCoin(coin)
 })((chessApp = {}));
 
 
-
-// function squareClickListener(event) {
-//   var coins = chessBoard.getCoinOnpos([this.row, this.col])
-//     if (coins) {
-//     console.log(coins)
-//       //to check previous coin is null or same coin
-//       if (precoin === null || precoin.coin === coins) {
-//         // if not null and same coin so returened here
-//         if (precoin !== null) return;
-//          precoin = {
-//           coin: coins,
-//           row: this.row,
-//           col: this.col
-//         };
-//       } else {
-//         const preCoinPossibleMovPos = chessBoard.getPosibleMoves([precoin.row, precoin.col]);
-//         preCoinPossibleMovPos.map(getChessSquare).forEach(function (square) {
-//           square.classList.remove("selected_coin_square");
-//         })
-//         precoin = { coin: coins, row: this.row, col: this.col };
-//       }
-//        if (chessBoard.selectedCoin) {
-//         const position = chessBoard.getPosOfCoin(chessBoard.selectedCoin)
-//         getChessSquare(position).classList.remove("selected_coin_square");
-//         }
-//       this.classList.add("selected_coin_square");
-//       const possibleMovPos = chessBoard.getPosibleMoves([this.row, this.col]);
-//       possibleMovPos.map(getChessSquare).forEach(function (square) {
-//         square.classList.add("selected_coin_square");
-//       })
-//       chessBoard.selectCoin(coins);
-//     } else {
-//       // else we need to show the error
-//       alert("Please select the coin before select move.");
-//     }
-//   }
