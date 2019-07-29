@@ -421,7 +421,7 @@
 
   Chess.prototype.movesippai = function (moveLocation, color, number) {
     if (this.canMovesippai(moveLocation, color, number)) {
-      this.coins[color].sippai = moveLocation;
+      this.coins[color].sippai[number] = moveLocation;
       return moveLocation;
     }
     throw Error("Invalid Move");

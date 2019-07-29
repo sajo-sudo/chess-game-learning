@@ -302,6 +302,26 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
   const doubleCoins = ["Rook", "Bishop", "Knight"]; // {Left, Right}
   const singleCoins = ["King", "Queen"]; // []
   const chessBoard = new chess.Chess();
+
+  function HTMLCollectionToArray(collection) {
+    let arr = []
+    for (let i = 0; i < collection.length; i++) {
+      arr.push(collection[i])
+      
+    }
+    return arr;
+  }
+
+  function resetAllSelectedSquare () {
+    const selectedSquares = HTMLCollectionToArray(document.getElementsByClassName("selected_coin_square"))
+    for (let i = 0; i < selectedSquares.length; i++) {
+      const square = selectedSquares[i];
+      console.log("square ::: ", square)
+      square.classList.remove("selected_coin_square")
+      
+    }
+  }
+
   function squareClickListener(event) {
     let coin = chessBoard.getCoinOnpos([this.row, this.col])
     if (coin) {
@@ -323,19 +343,28 @@ viewBox="0 0 297 297" style="enable-background:new 0 0 297 297;" xml:space="pres
     } else {
       if (chessBoard.selectedCoin) {
         const pos = chessBoard.getPosOfCoin(chessBoard.selectedCoin)
-        const square =getChessSquare(pos)
+        const square = getChessSquare(pos)
         const squarechildren = square.children
-        console.log(squarechildren,"ghjk")
+        const indexofsvg = squarechildren[0]
         const possibleMove = chessBoard.getPosibleMoves(pos);
-        const currentSquare = [this.row,this.col]
+        const currentSquare = [this.row, this.col]
+        const finalSquare = getChessSquare(currentSquare)
+
         const validPosition = possibleMove.find(function (move) {
           if (move[0] == currentSquare[0] && move[1] == currentSquare[1]) {
             return move
           }
         })
         if (validPosition) {
-      
-          alert('you have selected valid position')
+          const setsvg = finalSquare.appendChild(indexofsvg)
+          chessBoard.move(pos, currentSquare)
+          if (chessBoard.selectedCoin[0] === "white") {
+            finalSquare.classList.add("white_coin")
+          } else {
+            finalSquare.classList.add("black_coin")
+          }
+          chessBoard.selectCoin(null);
+          resetAllSelectedSquare();
         } else {
           alert('Invalid position')
         }
